@@ -1,0 +1,30 @@
+name: Build STEINEX TRANSIT FX
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64
+
+      - name: Build VST3
+        run: cmake --build build --config Release --target TransitFX_VST3 --parallel
+
+      - name: Upload plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: STEINEX-TRANSIT-FX-VST3-win64
+          path: build/TransitFX_artefacts/Release/VST3/STEINEX TRANSIT FX.vst3
+
+      - name: Upload debug map
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-map
+          path: build/**/*.map
+          if-no-files-found: ignore
